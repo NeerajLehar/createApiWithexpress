@@ -2,7 +2,6 @@ const { default: mongoose } = require("mongoose");
 const Mongoose = require("mongoose");
 var validator = require("validator");
 
-
 const userSchema = new Mongoose.Schema({
   name: {
     type: String,
@@ -23,7 +22,6 @@ const userSchema = new Mongoose.Schema({
     type: Number,
     min: 10,
     required: true,
-    unique: true,
   },
 });
 

@@ -1,7 +1,7 @@
 const User = require("../models/users");
 
 // @desc    Get all users
-// @api     Get /api/v1/users
+// @api     Get /
 // @access  public
 
 exports.getUsers = async (req, res, next) => {
@@ -16,13 +16,16 @@ exports.getUsers = async (req, res, next) => {
 };
 
 // @desc     Get user
-// @api      Get /api/v1/user
+// @api      Get /{:id}
 // @access   public
 
 exports.getUser = async (req, res, next) => {
   console.log(req.params.id);
   User.findById(req.params.id)
     .then((result) => {
+      if ((result = !null)) {
+        result = "user not found";
+      }
       res.status(201).json({ student: result });
       console.log(result);
     })
@@ -32,7 +35,7 @@ exports.getUser = async (req, res, next) => {
 };
 
 // @desc    Create user
-// @api     Create /api/v1/user
+// @api     Post //{:id}
 // @access  public
 
 exports.createUser = async (req, res, next) => {
@@ -44,16 +47,27 @@ exports.createUser = async (req, res, next) => {
       res.status(201).json({ createdUser: newUser });
     })
     .catch((e) => {
-      res.json(e);
+      // For email error
+      if ((e.keyValue.name = !null)) {
+        console.log("Name must be unique");
+        res.status(200).send(`Name must be unique`);
+      }
+      // For name error
+      else if ((e.keyValue.email = !null)) {
+        res.status(500).send(`Email must be unique`);
+        console.log("Email must be unique");
+      }
+      // For other error
+      else {
+        res.status(500).json({ error: e });
+      }
     });
-  console.log(e.message);
-  // end the process
-
-  res.end();
+  // end process
+  // res.end();
 };
 
 // @desc    delete user
-// @api     delete /api/v1/user
+// @api     delete /{:id}
 // @access  public
 
 exports.deleteUser = async (req, res, next) => {
@@ -63,11 +77,11 @@ exports.deleteUser = async (req, res, next) => {
       console.log(result);
     })
     .catch((err) => {
-      res.status(404).send(err.message);
+      res.status(500).send(err.message);
     });
 };
 // @desc    alter user
-// @api     alter /api/v1/user
+// @api     patch /{:id}
 // @access  public
 
 exports.updateUser = async (req, res, next) => {
